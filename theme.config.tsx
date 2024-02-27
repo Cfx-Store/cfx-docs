@@ -22,7 +22,7 @@ const config: DocsThemeConfig = {
   footer: {
     text: "CFX Store Documentation",
   },
-  // primaryHue: 350,
+  primaryHue: 350,
   useNextSeoProps() {
     return {
       titleTemplate: "CFX Store Docs - %s",

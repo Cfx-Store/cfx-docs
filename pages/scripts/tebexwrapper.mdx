@@ -46,13 +46,15 @@ So for example if you want to add a car, go to `data/cars.lua`, and add the car 
 ```
 
 ### Custom Handler
-If you want to add a handler for custom products, you can do so by going to `src/server/handlers.lua` and register one like so:
+If you want to add a handler for custom products, you can do so by going to `src/server/handlers.lua` and add this piece of code.
+This is made using our `cfx_lib`, this is a library that we use for our scripts to make it work for multiple frameworks.
+You can use whatever you want to make it work for your server.
 
 ```lua
 registerProductHandler("money", function(source, product)
   local amount = product.metadata.amount
-  local xPlayer = ESX.GetPlayerFromId(source)
-  xPlayer.addAccountMoney("bank", amount, "store")
+  local player = cfx.player.getFromId(source)
+  player.addAccountMoney("bank", acmount, "Donation Store Purchase")
 end)
 
 ```

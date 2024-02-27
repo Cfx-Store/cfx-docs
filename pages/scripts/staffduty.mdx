@@ -30,7 +30,7 @@ function lib.__addCommand(group, name, callback, parameters, help)
 
             if group ~= "builtin.everyone" then
                 if not exports["cfx_staffduty"]:inDuty(source) then
-                    exports["cfx_staffduty"]:sendMessage(source, "Je zit niet in staffdienst!")
+                    exports["cfx_staffduty"]:sendMessage(source, "You are not on staff duty!")
                     return
                 end
             end
@@ -60,7 +60,7 @@ function ESX.RegisterCommand(name, group, cb, allowConsole, suggestion)
 			local xPlayer, error = ESX.Players[playerId], nil
 
 			if not exports["cfx_staffduty"]:inDuty(playerId) then
-				exports["cfx_staffduty"]:sendMessage(playerId, "Je zit niet in staffdienst!")
+				exports["cfx_staffduty"]:sendMessage(playerId, "You are not in staff duty!")
 				return
 			end
 	end, true)

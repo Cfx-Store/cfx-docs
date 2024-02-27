@@ -1,0 +1,10 @@
+{
+  "index": "Introduction",
+  "scripts": "Scripts",
+  "contact": {
+    "title": "Contact ↗",
+    "type": "page",
+    "href": "https://discord.gg/nkNST4mjKr",
+    "newWindow": true
+  }
+}

@@ -1,0 +1,70 @@
+# Tebex Wrapper
+
+This is an in-game store where players can purchase products with coins. Players can buy coins through Tebex, and these coins are automatically added to their account. These coins can then be used to purchase in-game items.
+
+## Installation
+
+### 1. Generate a Secure Secret Key
+Begin by creating a secure secret key in the configuration file (config.lua). You can generate a strong key using [Avast's Random Password Generator](https://www.avast.com/random-password-generator#pc).
+This secret key is crucial for authenticating the addCoins command, which is executed by Tebex.
+
+### 2. Configure Tebex Store
+Ensure your Tebex store is properly set up and integrated with your game server.
+
+### 3. Create a New Command
+Navigate to your Tebex dashboard:
+
+* `Package > Add New > Package`
+* Scroll to the bottom and click on `Game Server Commands`
+* Click `Add Command`
+
+### 4. Add Command
+Enter the following details for the command:
+
+Command: `cfx_tebexwrapper:addCoins {hexid} [Amount Of Coins] [Your Secret Key]`
+Example for 10 coins: `cfx_tebexwrapper:addCoins {hexid} 10 fKJNjuKDJMi89ndnKMSFKDMdm9`
+
+This command structure allows Tebex to execute it when a player purchases coins. Make sure to replace [Your Secret Key] with the secure key generated earlier.
+
+## Adding Products
+Adding products is simple. You can add products by going to the `data` folder in the script, here you have lua files for each category.
+We already made those product categories with it's handlers: `vehicle`, `weapons`, `gang`, `item` and `money` *(NOTE: Those may not work on every server)*
+
+So for example if you want to add a car, go to `data/cars.lua`, and add the car you would like:
+```lua
+  {
+    name = "dubsta3",
+    label = "AMG 6X6",
+    description = "Beschrijving AMG 6X6",
+    price = 15,
+    image = "med6x6.png",
+    metadata = {
+      type = "car",
+      model = "dubsta3",
+    }
+  },
+```
+
+### Custom Handler
+If you want to add a handler for custom products, you can do so by going to `src/server/handlers.lua` and register one like so:
+
+```lua
+registerProductHandler("money", function(source, product)
+  local amount = product.metadata.amount
+  local xPlayer = ESX.GetPlayerFromId(source)
+  xPlayer.addAccountMoney("bank", amount, "store")
+end)
+
+```
+
+### Availablility Handler
+If you want to have limited products or one time products, for example if you want to sell gangs, you can do so by going to `src/server/availablility.lua` and register one like so:
+
+```lua
+registerAvailabilityHandler("gang", function(_, product)
+  local id = product.metadata.job
+  local isPurchased = isPurchased(id)
+
+  return not isPurchased
+end)
+```

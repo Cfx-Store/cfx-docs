@@ -1,0 +1,100 @@
+# Staffduty
+
+A staffduty script where you need to go on duty to execute certain commands and access txadmin.
+
+## Installation
+
+Download the script from our Discord and put in in your server, then add `ensure cfx_staffduty` in your server configuration.
+
+## Install in ox_lib
+
+To install this script into your ox_lib so admins need to be on duty to execute admin commands, you will need to modify `@ox_lib/imports/__addCommand/server.lua`.
+Search for the `lib.__addCommand` function at line `44`.
+
+And add those highlighted lines of code:
+
+```lua {15-20}
+function lib.__addCommand(group, name, callback, parameters, help)
+    if not group then group = 'builtin.everyone' end
+
+    if type(name) == 'table' then
+        for i = 1, #name do
+            ---@diagnostic disable-next-line: deprecated
+            lib.__addCommand(group, name[i], callback, parameters, help)
+        end
+    else
+        chatSuggestion(name, parameters, help)
+
+        RegisterCommand(name, function(source, args, raw)
+            source = tonumber(source) --[[@as number]]
+
+            if group ~= "builtin.everyone" then
+                if not exports["cfx_staffduty"]:inDuty(source) then
+                    exports["cfx_staffduty"]:sendMessage(source, "Je zit niet in staffdienst!")
+                    return
+                end
+            end
+
+            -- Rest of the code
+        end, group and true)
+    end
+end
+```
+
+## Install in es_extended
+
+To install this script into your es_extended so admins need to be on duty to execute admin commands, you will need to modify `@es_extended/server/functions.lua`. Search for the `ESX.RegisterCommand()` function at line `7`.
+
+And add those highlighted lines of code:
+
+```lua {12-15}
+function ESX.RegisterCommand(name, group, cb, allowConsole, suggestion)
+    -- Other code
+
+	RegisterCommand(name, function(playerId, args)
+		local command = Core.RegisteredCommands[name]
+
+		if not command.allowConsole and playerId == 0 then
+			print(('[^3WARNING^7] ^5%s'):format(TranslateCap('commanderror_console')))
+		else
+			local xPlayer, error = ESX.Players[playerId], nil
+
+			if not exports["cfx_staffduty"]:inDuty(playerId) then
+				exports["cfx_staffduty"]:sendMessage(playerId, "Je zit niet in staffdienst!")
+				return
+			end
+	end, true)
+
+    -- Rest of the code
+end
+```
+
+## Exports
+
+### Server
+
+#### `inDuty(source: number): boolean`
+
+Example:
+
+```lua
+RegisterCommand("ban", function(source)
+    if not exports.cfx_staffduty:inDuty(source) then
+        print("You are not in staff duty!")
+    end
+end)
+```
+
+### Client
+
+#### `inDuty() -> boolean`
+
+Example:
+
+```lua
+RegisterCommand("ban", function(source)
+    if not exports.cfx_staffduty:inDuty() then
+        print("You are not in staff duty!")
+    end
+end)
+```
